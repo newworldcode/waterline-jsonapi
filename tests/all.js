@@ -9,12 +9,12 @@ var get_ontology = require("./waterline")
 var payloads = require("./payloads")
 
 get_ontology(function (ontology) {
-  // tape("Test simple payload", function(test) {
-  //   test.plan(1)
-  //   test.doesNotThrow(function() {
-  //     waterline_jsonapi.new_from_values(payloads.simple, ontology.collections.user)
-  //   }, "Does not throw when creating simple payload.")
-  // })
+  tape("Test simple payload", function(test) {
+    test.plan(1)
+    test.doesNotThrow(function() {
+      waterline_jsonapi.new_from_values(payloads.simple, ontology.collections.user)
+    }, "Does not throw when creating simple payload.")
+  })
 
   tape("Test complex payload", function(test) {
     test.plan(1)
