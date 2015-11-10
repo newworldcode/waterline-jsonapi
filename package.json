@@ -1,0 +1,35 @@
+{
+  "name": "waterline-jsonapi",
+  "version": "1.0.0",
+  "description": "Create JSONAPI compliant payloads from Waterline blueprints.",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape tests/*.js | tap-spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/newworldcode/waterline-jsonapi.git"
+  },
+  "keywords": [
+    "waterline",
+    "jsonapi"
+  ],
+  "author": "newworldcode <hello@newworld.codes> (https://newworld.codes)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/newworldcode/waterline-jsonapi/issues"
+  },
+  "homepage": "https://github.com/newworldcode/waterline-jsonapi#readme",
+  "devDependencies": {
+    "eslint": "^1.7.3",
+    "istanbul": "^0.4.0",
+    "sails-memory": "^0.10.5",
+    "tap-spec": "^4.1.0",
+    "tape": "^4.2.0",
+    "waterline": "^0.10.26"
+  },
+  "dependencies": {
+    "jsonapi-validator": "^1.0.1",
+    "waterline-joi": "^1.0.10"
+  }
+}
