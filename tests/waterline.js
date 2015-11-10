@@ -64,16 +64,23 @@ module.exports = function start(callback) {
       lastName: "Armstrong"
     })
     .then(function (user) {
-      return ontology.collections.pet.create({
-        breed: "beagle",
-        type: "dog",
-        name: "Astro",
-        owner: user.id
-      })
+      ontology.collections.pet.create([
+        {
+          breed: "beagle",
+          type: "dog",
+          name: "Astro",
+          owner: user.id
+        },
+        {
+          breed: "beagle",
+          type: "dog",
+          name: "Cosmo",
+          owner: user.id
+        }
+      ])
+
+      return ontology
     })
-    .then(function() {
-      callback(ontology)
-      return ontology.collections.user.find().populate("pets")
-    })
+    .then(callback)
   })
 }
