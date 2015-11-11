@@ -9,17 +9,15 @@ var get_ontology = require("./waterline")
 var payloads = require("./payloads")
 
 get_ontology(function (ontology) {
-  tape("Test simple payload", function(test) {
-    test.plan(1)
-    test.doesNotThrow(function() {
-      JSONAPIModel.new_from_values(payloads.simple, ontology.collections.user)
-    }, "Does not throw when creating simple payload.")
-  })
+  var keys = Object.keys(payloads)
 
-  tape("Test complex payload", function(test) {
-    test.plan(1)
-    test.doesNotThrow(function() {
-      JSONAPIModel.new_from_values(payloads.complex, ontology.collections.user)
-    }, "Does not throw when creating complex payload.")
+  // Test a bunch of different payloads.
+  keys.forEach(function(key) {
+    tape("Test " + key + " payload", function(test) {
+      test.plan(1)
+      test.doesNotThrow(function() {
+        JSONAPIModel.new_from_values(payloads[key], ontology.collections.user)
+      }, "Does not throw when creating " + key + " payload.")
+    })
   })
 })

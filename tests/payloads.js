@@ -17,7 +17,24 @@ module.exports.simple = [ {
   id: 1
 } ]
 
-module.exports.complex = [ {
+module.exports.single = {
+  pets: [ {
+    breed: "beagle",
+    type: "dog",
+    name: "Astro",
+    owner: 1,
+    createdAt: "2015-11-10T12:41:16.873Z",
+    updatedAt: "2015-11-10T12:41:16.873Z",
+    id: 1
+  } ],
+  firstName: "Neil",
+  lastName: "Armstrong",
+  createdAt: "2015-11-10T12:41:16.866Z",
+  updatedAt: "2015-11-10T12:41:16.866Z",
+  id: 1
+}
+
+module.exports.multi = [ {
   pets: [ {
     breed: "beagle",
     type: "dog",
@@ -41,3 +58,5 @@ module.exports.complex = [ {
   updatedAt: "2015-11-10T12:41:16.866Z",
   id: 1
 } ]
+
+module.exports.error = new Error("I'm an error and I'm annoying.")
