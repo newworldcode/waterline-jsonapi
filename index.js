@@ -53,8 +53,6 @@ function new_from_values(values, collection) {
   // Return the created JSON API compliant resource
   var data = new JSONAPIModel(values, collection)
 
-  console.log("REPLY", JSON.stringify(data.toJSON(), null, 2))
-
   // Validate the payload before returning it. This throws hard.
   validator.validate(data.toJSON())
 
