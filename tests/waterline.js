@@ -5,6 +5,8 @@
  * TESTING PURPOSES ONLY.
  */
 
+var format = require("util").format
+
 // Get the tools.
 var Waterline = require("waterline")
 var sailsMemoryAdapter = require("sails-memory")
@@ -49,6 +51,18 @@ var pet_collection = Waterline.Collection.extend({
     owner: {
       model: "user"
     }
+  },
+
+  get_self_link: function(values) {
+    return format("https://example.com/pets/%s", values.id)
+  },
+
+  get_next_link: function(values) {
+    return format("https://example.com/pets/%s", values.id)
+  },
+
+  get_last_link: function(values) {
+    return format("https://example.com/pets/%s", values.id)
   }
 })
 

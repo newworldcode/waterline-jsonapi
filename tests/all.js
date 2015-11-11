@@ -16,7 +16,9 @@ get_ontology(function (ontology) {
     tape("Test " + key + " payload", function(test) {
       test.plan(1)
       test.doesNotThrow(function() {
-        JSONAPIModel.new_from_values(payloads[key], ontology.collections.user)
+        JSONAPIModel
+          .new_from_values(payloads[key], ontology.collections.user)
+          .toJSON()
       }, "Does not throw when creating " + key + " payload.")
     })
   })
