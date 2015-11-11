@@ -2,7 +2,7 @@
 
 // Get our tools.
 var utils = require("./lib/utils")
-var body = require("./lib/data")
+var JSONAPIModel = require("./lib/data")
 
 var Validator = require("jsonapi-validator").Validator
 var validator = new Validator()
@@ -51,12 +51,12 @@ function new_from_values(values, collection) {
   }
 
   // Return the created JSON API compliant resource
-  var data = new body.JSONAPIModel(values, collection)
+  var data = new JSONAPIModel(values, collection)
 
   console.log("REPLY", JSON.stringify(data.toJSON(), null, 2))
 
   // Validate the payload before returning it. This throws hard.
-  validator.validate(data)
+  validator.validate(data.toJSON())
 
   return data
 }
