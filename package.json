@@ -4,7 +4,8 @@
   "description": "Create JSONAPI compliant payloads from Waterline blueprints.",
   "main": "index.js",
   "scripts": {
-    "test": "tape tests/*.js | tap-spec"
+    "test": "tape tests/*.js | tap-spec",
+    "test-coverage": "istanbul cover tape tests/*.js --recursive --report lcov html -x cli.js | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
   },
   "dependencies": {
     "jsonapi-validator": "^1.0.1",
+    "uuid": "^2.0.1",
     "waterline-joi": "^1.0.10"
   }
 }
