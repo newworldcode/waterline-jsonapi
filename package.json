@@ -30,6 +30,7 @@
     "waterline": "^0.10.26"
   },
   "dependencies": {
+    "deep-equal": "^1.0.1",
     "jsonapi-validator": "^1.0.1",
     "uuid": "^2.0.1",
     "waterline-joi": "^1.0.10"

@@ -17,9 +17,16 @@ get_ontology(function (ontology) {
       test.plan(1)
       test.doesNotThrow(function() {
         JSONAPIModel
-          .new_from_values(payloads[key], ontology.collections.user)
+          .new_from_values(payloads[key].payload, ontology.collections[payloads[key].collection])
           .toJSON()
       }, "Does not throw when creating " + key + " payload.")
     })
+  })
+
+  tape("Test instance as function call", function(test) {
+    test.plan(1)
+    test.doesNotThrow(function() {
+      JSONAPIModel.create(payloads.simple.payload, ontology.collections.user).toJSON()
+    }, "Does not throw when calling as function instead of instance.")
   })
 })

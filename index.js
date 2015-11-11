@@ -85,5 +85,6 @@ function new_from_error(values, collection) {
 }
 
 // Export our tools.
+module.exports.create = JSONAPIModel
 module.exports.new_from_values = new_from_values
 module.exports.new_from_error = new_from_error

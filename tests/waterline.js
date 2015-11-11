@@ -36,7 +36,12 @@ var user_collection = Waterline.Collection.extend({
       collection: "pet",
       via: "owner"
     }
-  }
+  },
+  associations: [
+    {
+      alias: "pets"
+    }
+  ]
 })
 
 var pet_collection = Waterline.Collection.extend({
@@ -47,11 +52,25 @@ var pet_collection = Waterline.Collection.extend({
     type: "string",
     name: "string",
 
-    // Add a reference to User
+    // Add a reference to User.
     owner: {
       model: "user"
+    },
+
+    // Add a reference to Collar.
+    collar: {
+      model: "collar"
     }
   },
+
+  associations: [
+    {
+      alias: "owner"
+    },
+    {
+      alias: "collar"
+    }
+  ],
 
   get_self_link: function(values) {
     return format("https://example.com/pets/%s", values.id)
@@ -66,9 +85,18 @@ var pet_collection = Waterline.Collection.extend({
   }
 })
 
+var collar_collection = Waterline.Collection.extend({
+  identity: "collar",
+  connection: "default",
+  attributes: {
+    color: "string"
+  }
+})
+
 // Register the collections.
 waterline.loadCollection(user_collection)
 waterline.loadCollection(pet_collection)
+waterline.loadCollection(collar_collection)
 
 // Export.
 module.exports = function start(callback) {
@@ -78,20 +106,35 @@ module.exports = function start(callback) {
       lastName: "Armstrong"
     })
     .then(function (user) {
-      ontology.collections.pet.create([
+      ontology.collections.collar.create([
         {
-          breed: "beagle",
-          type: "dog",
-          name: "Astro",
-          owner: user.id
+          color: "red"
         },
         {
-          breed: "beagle",
-          type: "dog",
-          name: "Cosmo",
-          owner: user.id
+          color: "blue"
         }
       ])
+      .then(function(collars) {
+        return ontology.collections.pet.create([
+          {
+            breed: "beagle",
+            type: "dog",
+            name: "Astro",
+            owner: user.id,
+            collar: collars[0].id
+          },
+          {
+            breed: "beagle",
+            type: "dog",
+            name: "Cosmo",
+            owner: user.id,
+            collar: collars[1].id
+          }
+        ])
+      })
+      // .then(function(pets) {
+      //   ontology.collections.pet.find().populateAll().exec(console.log.bind(console))
+      // })
 
       return ontology
     })
