@@ -17,8 +17,8 @@ function new_from_values(values, collection) {
   // If it's actually a Boom error value
   // then fire the correct function to
   // jsonapi-ise that structure.
-  if (values.isBoom) {
-    return new_from_boom(values, collection)
+  if (values instanceof Error) {
+    return new_from_error(values, collection)
   }
 
   // Were we passed an array of results from Waterline?
@@ -59,10 +59,31 @@ function new_from_values(values, collection) {
   return data
 }
 
-function new_from_boom(values, collection) {
+/**
+ * Generate a payload from an error object.
+ * @param  {Object} values_object to get payload for.
+ * @param  {Waterline.Collection} collection to base this conversion on.
+ * @return {Object} JSON API compliant payload with values set.
+ */
+function new_from_error(values, collection) {
+  // For generating an error id.
+  var uuid = require("uuid")
 
+  var actual_values = {
+    id: values.id || uuid.v4(),
+    error: values,
+    is_error: true
+  }
+
+  // Return the created JSON API compliant resource
+  var data = new JSONAPIModel(actual_values, collection)
+
+  // Validate the payload before returning it. This throws hard.
+  validator.validate(data.toJSON())
+
+  return data
 }
 
 // Export our tools.
 module.exports.new_from_values = new_from_values
-module.exports.new_from_boom = new_from_boom
+module.exports.new_from_error = new_from_error
