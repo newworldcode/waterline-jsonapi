@@ -11,13 +11,13 @@ const payloads = require("./payloads")
 get_ontology(ontology => {
   const keys = Object.keys(payloads)
 
-  // const generator = new Waterline_JSONAPI(payloads.model.payload, ontology.collections.pet, { page: 10 })
+  const generator = new Waterline_JSONAPI(payloads.model.payload, ontology.collections.pet, { page: 10 })
 
-  // generator.api_root = "http://localhost:1811"
+  generator.api_root = "http://localhost:1811"
 
-  // generator.generate()
-  //   .then(generator => console.log(JSON.stringify(generator, null, 2)))
-  //   .catch(err => console.log("err", err, err.stack))
+  generator.generate()
+    .then(generator => console.log(JSON.stringify(generator, null, 2)))
+    .catch(err => console.log("err", err, err.stack))
 
   // Test a bunch of different payloads.
   keys.forEach(key => {

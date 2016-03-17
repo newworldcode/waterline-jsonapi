@@ -70,9 +70,8 @@ const pet_collection = Waterline.Collection.extend({
     }
   ],
 
-  // get_self_link: (values, meta) => `http://localhost:1811/pets/${values.id}`,
-  get_next_link: (values, meta) => `http://localhost:1811/pets/${meta.page + 1}`,
-  get_last_link: (values, meta) => `http://localhost:1811/pets/${Math.max(meta.page - 1, 0)}`
+  get_next_link: (values, meta) => `http://localhost:1811/pets/?page=${meta.page + 1}`,
+  get_last_link: (values, meta) => `http://localhost:1811/pets/?page=${Math.max(meta.page - 1, 0)}`
 })
 
 const collar_collection = Waterline.Collection.extend({
