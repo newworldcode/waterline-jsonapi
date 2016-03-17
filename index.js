@@ -33,13 +33,21 @@ class Waterline_JSONAPI {
    * @return {Promise} promise.
    */
   constructor(values, collection, meta) {
+    // Set the values.
+    this.values = values
+
+    // Errors require a *lot* less processing than values.
+    // Check that first.
+    if (values instanceof Error || values.is_error) {
+      return this
+    }
+
     // And a collection.
     if (typeof collection === "undefined") {
       throw new ReferenceError("Waterline_JSONAPI cannot generate without knowing what collection to use.")
     }
 
     // Set the defaults.
-    this.values = utils.clone(values)
     this.meta = meta ? utils.clone(meta) : {}
     this.collection = collection
     this.associations = utils.get_association_keys(collection)
@@ -96,6 +104,10 @@ class Waterline_JSONAPI {
    * @return {Promise} promise.
    */
   generate() {
+    if (this.values instanceof Error || this.values.is_error) {
+      return this.payload_from_error(this.values)
+    }
+
     // The functions to call to create
     // the proper payload. They are run
     // in parallel
@@ -119,6 +131,38 @@ class Waterline_JSONAPI {
 
     // And then return it for resolution.
     return this.promise
+  }
+
+  /**
+   * Create a JSONAPI compliant error object.
+   * @param  {Object} values to get error details from.
+   * @return {Object} JSONAPI compliant error object.
+   */
+  payload_from_error(values) {
+    return new Promise(resolve => {
+      // Add all valid keys from the values object.
+      const object = {
+        id: values.id || require("uuid").v4(),
+        detail: values.message,
+        source: values.source,
+        code: values.code,
+        status: values.status,
+        meta: values.meta,
+        title: values.title,
+        links: values.links
+      }
+
+      // Remove anything useless.
+      Object.keys(object)
+        .forEach(key => {
+          if (!object[key]) {
+            delete object[key]
+          }
+        })
+
+      // Resolve the promise.
+      return resolve(object)
+    })
   }
 
   create_data(done) {
