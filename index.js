@@ -19,6 +19,7 @@ class Waterline_JSONAPI {
     let associated_collections // Map
     let promise // Promise
     let api_root // String
+    let meta // Any
    */
 
   /**
@@ -28,9 +29,10 @@ class Waterline_JSONAPI {
    * successfully created or rejected with the error.
    * @param  {Array|Object} values to make JSONAPI compliant.
    * @param  {Waterline.Collection} collection to base payload on.
+   * @param  {Any} meta data, extra information passed to collection link functions. [optional]
    * @return {Promise} promise.
    */
-  constructor(values, collection) {
+  constructor(values, collection, meta) {
     // And a collection.
     if (typeof collection === "undefined") {
       throw new ReferenceError("Waterline_JSONAPI cannot generate without knowing what collection to use.")
@@ -38,31 +40,50 @@ class Waterline_JSONAPI {
 
     // Set the defaults.
     this.values = utils.clone(values)
+    this.meta = meta ? utils.clone(meta) : {}
     this.collection = collection
     this.associations = utils.get_association_keys(collection)
     this.associated_collections = utils.get_associated_collections(collection)
 
-    // Start the generation.
-    return this.generate()
+    // Return this instance.
+    return this
   }
 
+  /**
+   * Return whether or not the values
+   * passed in was an array or not.
+   * Will normalise single element arrays to an object.
+   * @return {Boolean} is array or not.
+   */
   is_array() {
+    // If it's an array and it's length
+    // is more than one, return true.
     if (Array.isArray(this.values) && this.values.length > 1) {
       return true
     }
+    // If it's an array and the length is 1,
+    // reset to the first element and return false.
     else if (Array.isArray(this.values) && this.values.length === 1) {
       this.values = this.values[0]
       return false
     }
+    // Otherwise, it's definitely not an array.
     else {
       return false
     }
   }
 
+  /**
+   * Run callback over all the values as a map
+   * function and return the value.
+   * @param  {Function} callback to run as map
+   * @param  {Function|Object} scope to apply to the map function.
+   * @return {Object|Array} Array of objects or object.
+   */
   run(callback, scope) {
     // Generate the payload(s)
     if (this.is_array()) {
-      return this.values.map(callback.bind(scope || this))
+      return this.values.map(callback, scope)
     }
     else {
       return callback.call(scope || this, this.values)
@@ -140,20 +161,52 @@ class Waterline_JSONAPI {
     done()
   }
 
+  /**
+   * Get all the data and create the
+   * body of the payload to send to
+   * the promise.
+   *
+   * @return {Object} JSONAPI compliant payload.
+   */
   toJSON() {
     const data = this.response_data
     const links = this.response_links
-    const includes = this.response_includes
+    const included = this.response_includes
     const meta = this.response_meta
     const jsonapi = this.response_jsonapi
 
-    return {
+    return this.optimise({
       links,
       data,
       meta,
-      includes,
+      included,
       jsonapi
-    }
+    })
+  }
+
+  /**
+   * Remove bad keys from an object, these
+   * could be empty arrays or empty objects.
+   * @param  {[type]} values [description]
+   * @return {[type]}        [description]
+   */
+  optimise(values) {
+    Object.keys(values)
+      .forEach(key => {
+        if (
+          // If the value is falsey, remove it.
+          !values[key] ||
+          // If it's an empty array and it's not the "data" key, remove it.
+          (Array.isArray(values[key]) && values[key].length === 0 && key !== "data") ||
+          // Otherwise, if it's an empty object. Remove it.
+          Object.keys(values[key]).length === 0
+        ) {
+          delete values[key]
+        }
+      })
+
+    // Return the updated values.
+    return values
   }
 
   // DEPRECATED FUNCTIONS.
@@ -170,7 +223,7 @@ class Waterline_JSONAPI {
     utils.deprecation_notice("new_from_values")
 
     // Return a new instance.
-    return new Waterline_JSONAPI(values, collection)
+    return new Waterline_JSONAPI(values, collection).generate()
   }
 
   /**
@@ -184,7 +237,7 @@ class Waterline_JSONAPI {
     utils.deprecation_notice("new_from_error")
 
     // Return a new instance.
-    return new Waterline_JSONAPI(values, collection)
+    return new Waterline_JSONAPI(values, collection).generate()
   }
 
   /**
@@ -198,7 +251,7 @@ class Waterline_JSONAPI {
     utils.deprecation_notice("create")
 
     // Return a new instance.
-    return new Waterline_JSONAPI(values, collection)
+    return new Waterline_JSONAPI(values, collection).generate()
   }
 }
 
