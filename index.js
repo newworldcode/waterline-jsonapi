@@ -252,54 +252,6 @@ class Waterline_JSONAPI {
     // Return the updated values.
     return values
   }
-
-  // DEPRECATED FUNCTIONS.
-  // Will be removed in the next version.
-
-  /**
-   * Get a payload from an object of values.
-   * @param  {Object} values_object to get payload for.
-   * @param  {Waterline.Collection} collection to base this conversion on.
-   * @param  {Any} meta data, extra information passed to collection link functions. [optional]
-   * @return {Object} JSON API compliant payload with values set.
-   */
-  static new_from_values(values, collection, meta) {
-    // Show a deprecation notice.
-    utils.deprecation_notice("new_from_values")
-
-    // Return a new instance.
-    return new Waterline_JSONAPI(values, collection, meta).generate()
-  }
-
-  /**
-   * Generate a payload from an error object.
-   * @param  {Object} values_object to get payload for.
-   * @param  {Waterline.Collection} collection to base this conversion on.
-   * @param  {Any} meta data, extra information passed to collection link functions. [optional]
-   * @return {Object} JSON API compliant payload with values set.
-   */
-  static new_from_error(values, collection, meta) {
-    // Show a deprecation notice.
-    utils.deprecation_notice("new_from_error")
-
-    // Return a new instance.
-    return new Waterline_JSONAPI(values, collection, meta).generate()
-  }
-
-  /**
-   * Generate a payload from an object of values.
-   * @param  {Object} values_object to get payload for.
-   * @param  {Waterline.Collection} collection to base this conversion on.
-   * @param  {Any} meta data, extra information passed to collection link functions. [optional]
-   * @return {Object} JSON API compliant payload with values set.
-   */
-  static create(values, collection, meta) {
-    // Show a deprecation notice.
-    utils.deprecation_notice("create")
-
-    // Return a new instance.
-    return new Waterline_JSONAPI(values, collection, meta).generate()
-  }
 }
 
 // Export our tools.
