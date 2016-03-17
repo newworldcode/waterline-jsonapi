@@ -1,32 +1,34 @@
 "use strict"
 
 // Get our tools.
-var tape = require("tape")
-var JSONAPIModel = require("../index")
-var get_ontology = require("./waterline")
+const tape = require("tape")
+const Waterline_JSONAPI = require("../index")
+const get_ontology = require("./waterline")
+const validator = new (require("jsonapi-validator").Validator)()
 
 // The test payload.
-var payloads = require("./payloads")
+const payloads = require("./payloads")
 
-get_ontology(function (ontology) {
-  var keys = Object.keys(payloads)
-
+get_ontology(ontology => {
   // Test a bunch of different payloads.
-  keys.forEach(function(key) {
-    tape("Test " + key + " payload", function(test) {
-      test.plan(1)
-      test.doesNotThrow(function() {
-        JSONAPIModel
-          .new_from_values(payloads[key].payload, ontology.collections[payloads[key].collection])
-          .toJSON()
-      }, "Does not throw when creating " + key + " payload.")
-    })
-  })
+  Object.keys(payloads)
+    .forEach(key => {
+      tape(`Test "${key}" payload`, test => {
+        test.plan(1)
+        test.doesNotThrow(() => {
+          new Waterline_JSONAPI(payloads[key].payload, ontology.collections[payloads[key].collection])
+            .generate()
+            .then(payload => validator.validate(payload))
+            .catch(err => { throw err })
+        }, `Does not throw when creating "${key}" and validating payload.`)
+      })
 
-  tape("Test instance as function call", function(test) {
-    test.plan(1)
-    test.doesNotThrow(function() {
-      JSONAPIModel.create(payloads.simple.payload, ontology.collections.user).toJSON()
-    }, "Does not throw when calling as function instead of instance.")
-  })
+      tape("Throws when missing collection argument and does not throw when passed meta.", test => {
+        test.throws(() => new Waterline_JSONAPI({}), "Throws when not passed a collection.")
+        test.doesNotThrow(() => new Waterline_JSONAPI({}, ontology.collections.user, {
+          copyright: "New World Code Ltd 2016"
+        }), "Does not throw when passed meta data.")
+        test.end()
+      })
+    })
 })
