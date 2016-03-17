@@ -39,7 +39,11 @@ const user_collection = Waterline.Collection.extend({
     {
       alias: "pets"
     }
-  ]
+  ],
+  get_meta: {
+    copyright: "New World Code 2016",
+    author: "New World Code hello@newworld.codes <https://newworld.codes>"
+  }
 })
 
 const pet_collection = Waterline.Collection.extend({
@@ -70,8 +74,22 @@ const pet_collection = Waterline.Collection.extend({
     }
   ],
 
-  get_next_link: (values, meta) => `http://localhost:1811/pets/?page=${meta.page + 1}`,
-  get_last_link: (values, meta) => `http://localhost:1811/pets/?page=${Math.max(meta.page - 1, 0)}`
+  get_next_link: (values, meta) => {
+    switch (meta.context) {
+    case "relationship":
+      return
+    default:
+      return `http://localhost:1811/pet/?page=${meta.page + 1}`
+    }
+  },
+  get_last_link: (values, meta) => {
+    switch (meta.context) {
+    case "relationship":
+      return
+    default:
+      return `http://localhost:1811/pet/?page=${Math.max(meta.page - 1, 0)}`
+    }
+  }
 })
 
 const collar_collection = Waterline.Collection.extend({
