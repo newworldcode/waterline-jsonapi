@@ -5,15 +5,13 @@
  * TESTING PURPOSES ONLY.
  */
 
-var format = require("util").format
-
 // Get the tools.
-var Waterline = require("waterline")
-var sailsMemoryAdapter = require("sails-memory")
-var waterline = new Waterline()
+const Waterline = require("waterline")
+const sailsMemoryAdapter = require("sails-memory")
+const waterline = new Waterline()
 
 // Create a config.
-var config = {
+const config = {
   adapters: {
     memory: sailsMemoryAdapter
   },
@@ -26,7 +24,7 @@ var config = {
 }
 
 // Create the collections.
-var user_collection = Waterline.Collection.extend({
+const user_collection = Waterline.Collection.extend({
   identity: "user",
   connection: "default",
   attributes: {
@@ -44,7 +42,7 @@ var user_collection = Waterline.Collection.extend({
   ]
 })
 
-var pet_collection = Waterline.Collection.extend({
+const pet_collection = Waterline.Collection.extend({
   identity: "pet",
   connection: "default",
   attributes: {
@@ -72,20 +70,12 @@ var pet_collection = Waterline.Collection.extend({
     }
   ],
 
-  get_self_link: function(values) {
-    return format("https://example.com/pets/%s", values.id)
-  },
-
-  get_next_link: function(values) {
-    return format("https://example.com/pets/%s", values.id)
-  },
-
-  get_last_link: function(values) {
-    return format("https://example.com/pets/%s", values.id)
-  }
+  get_self_link: values => `http://localhost:1811/pets/${values.id}`,
+  get_next_link: values => `http://localhost:1811/pets/${values.id + 1}`,
+  get_last_link: values => `http://localhost:1811/pets/${values.id - 1}`
 })
 
-var collar_collection = Waterline.Collection.extend({
+const collar_collection = Waterline.Collection.extend({
   identity: "collar",
   connection: "default",
   attributes: {

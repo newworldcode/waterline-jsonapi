@@ -1,32 +1,28 @@
 "use strict"
 
 // Get our tools.
-var tape = require("tape")
-var JSONAPIModel = require("../index")
-var get_ontology = require("./waterline")
+const tape = require("tape")
+const Waterline_JSONAPI = require("../index")
+const get_ontology = require("./waterline")
 
 // The test payload.
-var payloads = require("./payloads")
+const payloads = require("./payloads")
 
 get_ontology(function (ontology) {
-  var keys = Object.keys(payloads)
+  const keys = Object.keys(payloads)
+
+  new Waterline_JSONAPI(payloads.multi.payload, ontology.collections.user)
+    .then(generator => console.log(JSON.stringify(generator, null, 2)))
+    .catch(err => console.log("err", err, err.stack))
 
   // Test a bunch of different payloads.
   keys.forEach(function(key) {
     tape("Test " + key + " payload", function(test) {
       test.plan(1)
-      test.doesNotThrow(function() {
-        JSONAPIModel
-          .new_from_values(payloads[key].payload, ontology.collections[payloads[key].collection])
-          .toJSON()
+      test.doesNotThrow(() => {
+        new Waterline_JSONAPI(payloads[key].payload, ontology.collections[payloads[key].collection])
+          .then(generator => generator.toJSON())
       }, "Does not throw when creating " + key + " payload.")
     })
-  })
-
-  tape("Test instance as function call", function(test) {
-    test.plan(1)
-    test.doesNotThrow(function() {
-      JSONAPIModel.create(payloads.simple.payload, ontology.collections.user).toJSON()
-    }, "Does not throw when calling as function instead of instance.")
   })
 })
