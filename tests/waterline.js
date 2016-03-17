@@ -40,6 +40,9 @@ const user_collection = Waterline.Collection.extend({
       alias: "pets"
     }
   ],
+  get_self_link: values => `http://localhost:1811/user/${values.id}`,
+  get_next_link: () => false,
+  get_related_link: values => `http://localhost:1811/pet/${values.id}`,
   get_meta: {
     copyright: "New World Code 2016",
     author: "New World Code hello@newworld.codes <https://newworld.codes>"
