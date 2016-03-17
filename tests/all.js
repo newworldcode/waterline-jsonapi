@@ -18,21 +18,16 @@ get_ontology(ontology => {
         test.doesNotThrow(() => {
           new Waterline_JSONAPI(payloads[key].payload, ontology.collections[payloads[key].collection])
             .generate()
-            .then(generator => validator.validate(generator))
+            .then(payload => validator.validate(payload))
             .catch(err => { throw err })
         }, `Does not throw when creating "${key}" and validating payload.`)
       })
 
-      tape("Throws when missing collection argument", test => {
+      tape("Throws when missing collection argument and does not throw when passed meta.", test => {
         test.throws(() => new Waterline_JSONAPI({}), "Throws when not passed a collection.")
-        test.doesNotThrow(() => new Waterline_JSONAPI({}, ontology.collections.user, {}), "Does not throw when passed meta data.")
-        test.end()
-      })
-
-      tape("Test deprecated functions", test => {
-        test.doesNotThrow(() => Waterline_JSONAPI.new_from_values({}, ontology.collections.user, {}), "Does not throw using new_from_values")
-        test.doesNotThrow(() => Waterline_JSONAPI.new_from_error({}, ontology.collections.user, {}), "Does not throw using new_from_error")
-        test.doesNotThrow(() => Waterline_JSONAPI.create({}, ontology.collections.user, {}), "Does not throw using create")
+        test.doesNotThrow(() => new Waterline_JSONAPI({}, ontology.collections.user, {
+          copyright: "New World Code Ltd 2016"
+        }), "Does not throw when passed meta data.")
         test.end()
       })
     })
