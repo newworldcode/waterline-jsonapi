@@ -104,8 +104,14 @@ class Waterline_JSONAPI {
    * @return {Promise} promise.
    */
   generate() {
+    // Errors require less processing, check that first.
     if (this.values instanceof Error || this.values.is_error) {
       return this.payload_from_error(this.values)
+    }
+
+    // Just getting relationships is also less processing.
+    if (this.meta.is_relationships) {
+      return this.get_relationships_payload(this.meta.relationships_type_filter)
     }
 
     // The functions to call to create
@@ -131,6 +137,40 @@ class Waterline_JSONAPI {
 
     // And then return it for resolution.
     return this.promise
+  }
+
+  /**
+   * Return a simple array of the relationships.
+   * @return {Promise} promise for resolution.
+   */
+  get_relationships_payload(filter) {
+    return new Promise(resolve => {
+      // Build all the relationships.
+      const data = []
+
+      // Loop over each value.
+      this.run(value => {
+        // And each association.
+        this.associations.forEach(association_name => {
+          // Check it has the property.
+          if (value.hasOwnProperty(association_name)) {
+            data.push({
+              id: value.id,
+              type: association_name
+            })
+          }
+        })
+      })
+
+      if (filter) {
+        resolve({
+          data: data.filter(relationship => relationship.type === filter)
+        })
+      }
+      else {
+        resolve({ data })
+      }
+    })
   }
 
   /**
