@@ -1,6 +1,6 @@
 {
   "name": "waterline-jsonapi",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Create JSONAPI compliant payloads from Waterline blueprints.",
   "main": "index.js",
   "scripts": {
