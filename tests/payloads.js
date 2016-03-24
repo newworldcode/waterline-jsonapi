@@ -144,3 +144,13 @@ module.exports.model = {
     }
   ]
 }
+
+module.exports.collar = {
+  collection: "collar",
+  payload: {
+    color:"blue",
+    createdAt:"2015-11-11T13:56:01.860Z",
+    updatedAt:"2015-11-11T13:56:01.860Z",
+    id:2
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "waterline-jsonapi",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Create JSONAPI compliant payloads from Waterline blueprints.",
   "main": "index.js",
   "scripts": {
@@ -24,14 +24,16 @@
   "devDependencies": {
     "eslint": "^1.7.3",
     "istanbul": "^0.4.0",
+    "jsonapi-validator": "^1.0.1",
     "sails-memory": "^0.10.5",
     "tap-spec": "^4.1.0",
     "tape": "^4.2.0",
     "waterline": "^0.10.26"
   },
   "dependencies": {
+    "async": "^1.5.2",
     "deep-equal": "^1.0.1",
-    "jsonapi-validator": "^1.0.1",
+    "promise": "^7.1.1",
     "uuid": "^2.0.1",
     "waterline-joi": "^1.0.10"
   }
