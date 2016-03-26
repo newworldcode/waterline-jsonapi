@@ -278,6 +278,7 @@ class Waterline_JSONAPI {
     Object.keys(values)
       .forEach(key => {
         if (
+          key !== "data" &&
           // If the value is falsey, remove it.
           !values[key] ||
           // If it's an empty array and it's not the "data" key, remove it.
