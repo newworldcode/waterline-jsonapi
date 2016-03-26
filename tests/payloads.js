@@ -25,6 +25,11 @@ module.exports.simple = {
   } ]
 }
 
+module.exports.empty = {
+  collection: "user",
+  payload: []
+}
+
 module.exports.single = {
   collection: "user",
   payload: {
