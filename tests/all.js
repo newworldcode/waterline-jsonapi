@@ -26,7 +26,8 @@ get_ontology(ontology => {
       tape("Throws when missing collection argument and does not throw when passed meta.", test => {
         test.throws(() => new Waterline_JSONAPI({}), "Throws when not passed a collection.")
         test.doesNotThrow(() => new Waterline_JSONAPI({}, ontology.collections.user, {
-          copyright: "New World Code Ltd 2016"
+          copyright: "New World Code Ltd 2016",
+          is_relationships: true
         }), "Does not throw when passed meta data.")
         test.end()
       })
