@@ -1,5 +1,11 @@
 # waterline-jsonapi
 
+[![Build Status](https://travis-ci.org/newworldcode/waterline-jsonapi.svg?branch=master)](https://travis-ci.org/newworldcode/waterline-jsonapi)
+[![Coverage Status](https://coveralls.io/repos/github/newworldcode/waterline-jsonapi/badge.svg?branch=master)](https://coveralls.io/github/newworldcode/waterline-jsonapi?branch=master)
+[![Code Climate](https://codeclimate.com/github/newworldcode/waterline-jsonapi/badges/gpa.svg)](https://codeclimate.com/github/newworldcode/waterline-jsonapi)
+[![Known Vulnerabilities](https://snyk.io/test/github/newworldcode/waterline-jsonapi/badge.svg)](https://snyk.io/test/github/newworldcode/waterline-jsonapi)
+
+
 Create [JSON API][json-api] compliant payloads from Waterline blueprints and query results and get a promise in return.
 
 `npm i waterline-jsonapi --save`

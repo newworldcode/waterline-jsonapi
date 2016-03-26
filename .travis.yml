@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+  - "4.1"
+  - "4.0"
+  - "5.0"
+  - "5.1"
+  - "5.2"
+  - "5.3"
+  - "5.4"
+
+sudo: false
+
+script:
+  - "npm run test-coverage"
+
+after_script:
+  - "npm install coveralls@2 && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+
+addons:
+  code_climate:
+    repo_token: 756ac283cdc3d60a756fa8526be7a8159c340facfd7fa02ce2ea4988eaa8f8ad
