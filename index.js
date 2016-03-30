@@ -201,7 +201,9 @@ class Waterline_JSONAPI {
         })
 
       // Resolve the promise.
-      return resolve(object)
+      return resolve({
+        errors: object
+      })
     })
   }
 
