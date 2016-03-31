@@ -34,7 +34,7 @@ class Waterline_JSONAPI {
    */
   constructor(values, collection, meta) {
     // Set the values.
-    this.values = values
+    this.values = utils.clone(values)
 
     // Errors require a *lot* less processing than values.
     // Check that first.
@@ -91,10 +91,10 @@ class Waterline_JSONAPI {
   run(callback, scope) {
     // Generate the payload(s)
     if (this.is_array()) {
-      return this.values.map(callback, scope)
+      return this.values.slice().map(callback, scope)
     }
     else {
-      return callback.call(scope, this.values)
+      return callback.call(scope, utils.clone(this.values))
     }
   }
 
@@ -154,10 +154,12 @@ class Waterline_JSONAPI {
         this.associations.forEach(association_name => {
           // Check it has the property.
           if (value.hasOwnProperty(association_name)) {
-            data.push({
-              id: value.id,
-              type: association_name
-            })
+            if (value[association_name]) {
+              data.push({
+                id: value[association_name].id,
+                type: association_name
+              })
+            }
           }
         })
       })
