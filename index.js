@@ -110,7 +110,7 @@ class Waterline_JSONAPI {
     }
 
     // Just getting relationships is also less processing.
-    if (this.meta.is_relationships) {
+    if (this.meta && this.meta.is_relationships) {
       return this.get_relationships_payload(this.meta.relationships_type_filter)
     }
 
