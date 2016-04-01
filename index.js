@@ -33,17 +33,13 @@ class Waterline_JSONAPI {
    * @return {Promise} promise.
    */
   constructor(values, collection, meta) {
-    // Set the values.
-    this.values = utils.clone(values)
-
-    // Errors require a *lot* less processing than values.
-    // Check that first.
-    if (values instanceof Error || values.is_error) {
-      return this
-    }
+    // Set the values. If it's an instance
+    // of Error, don't clone as clone isn't
+    // a deep clone.
+    this.values = values instanceof Error ? values : utils.clone(values)
 
     // And a collection.
-    if (typeof collection === "undefined") {
+    if (!collection) {
       throw new ReferenceError("Waterline_JSONAPI cannot generate without knowing what collection to use.")
     }
 
@@ -89,12 +85,12 @@ class Waterline_JSONAPI {
    * @return {Object|Array} Array of objects or object.
    */
   run(callback, scope) {
-    // Generate the payload(s)
+    // Generate the payload(s).
     if (this.is_array()) {
       return this.values.slice().map(callback, scope)
     }
     else {
-      return callback.call(scope, utils.clone(this.values))
+      return [callback.call(scope, this.values)]
     }
   }
 
@@ -104,8 +100,15 @@ class Waterline_JSONAPI {
    * @return {Promise} promise.
    */
   generate() {
+    // Check we have a collection first.
+    if (!this.collection) {
+      throw new ReferenceError("No collection to generate on.")
+    }
+
     // Errors require less processing, check that first.
-    if (this.values instanceof Error || this.values.is_error) {
+    // If it's a 404 error, ignore this as that's not a
+    // real error in the world of JSONAPI.
+    if ((this.values instanceof Error || this.values.is_error) && this.values.code !== 404) {
       return this.payload_from_error(this.values)
     }
 
@@ -115,8 +118,7 @@ class Waterline_JSONAPI {
     }
 
     // The functions to call to create
-    // the proper payload. They are run
-    // in parallel
+    // the proper payload.
     const functions = [
       "create_data",
       "create_links",
@@ -125,7 +127,7 @@ class Waterline_JSONAPI {
       "create_jsonapi"
     ]
 
-    // Create a promise and execute all the generators in parallel.
+    // Create a promise and execute all the generators.
     this.promise = new Promise((resolve, reject) => {
       async.parallel(
         // Tasks.
@@ -275,24 +277,33 @@ class Waterline_JSONAPI {
   /**
    * Remove bad keys from an object, these
    * could be empty arrays or empty objects.
-   * @param  {[type]} values [description]
-   * @return {[type]}        [description]
+   * @param  {Object} values to optimise.
+   * @return {Object} Object of values without falsey/empty values.
    */
   optimise(values) {
     Object.keys(values)
       .forEach(key => {
         if (
           key !== "data" &&
-          // If the value is falsey, remove it.
-          !values[key] ||
-          // If it's an empty array and it's not the "data" key, remove it.
-          (Array.isArray(values[key]) && values[key].length === 0 && key !== "data") ||
-          // Otherwise, if it's an empty object. Remove it.
-          Object.keys(values[key]).length === 0
+          (
+            // If the value is falsey, remove it.
+            !values[key] ||
+            // If it's an empty array and it's not the "data" key, remove it.
+            (Array.isArray(values[key]) && values[key].length === 0 && key !== "data") ||
+            // Otherwise, if it's an empty object. Remove it.
+            Object.keys(values[key]).length === 0
+          )
         ) {
           delete values[key]
         }
       })
+
+    // Check the length of the data attribute.
+    if (Array.isArray(values.data)) {
+      if (values.data.length === 1) {
+        values.data = values.data[0]
+      }
+    }
 
     // Return the updated values.
     return values
