@@ -145,7 +145,7 @@ class Waterline_JSONAPI {
    * Return a simple array of the relationships.
    * @return {Promise} promise for resolution.
    */
-  get_relationships_payload(filter) {
+  get_relationships_payload(type) {
     return new Promise(resolve => {
       // Build all the relationships.
       const data = []
@@ -153,22 +153,15 @@ class Waterline_JSONAPI {
       // Loop over each value.
       this.run(value => {
         // And each association.
-        this.associations.forEach(association_name => {
-          // Check it has the property.
-          if (value.hasOwnProperty(association_name)) {
-            if (value[association_name]) {
-              data.push({
-                id: value[association_name].id,
-                type: association_name
-              })
-            }
-          }
+        data.push({
+          id: value.id,
+          type
         })
       })
 
-      if (filter) {
+      if (type) {
         resolve({
-          data: data.filter(relationship => relationship.type === filter)
+          data: data.filter(relationship => relationship.type === type)
         })
       }
       else {
