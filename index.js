@@ -99,7 +99,7 @@ class Waterline_JSONAPI {
    * to get the job done faster.
    * @return {Promise} promise.
    */
-  generate() {
+  generate(promise) {
     // Check we have a collection first.
     if (!this.collection) {
       throw new ReferenceError("No collection to generate on.")
@@ -128,14 +128,20 @@ class Waterline_JSONAPI {
     ]
 
     // Create a promise and execute all the generators.
-    this.promise = new Promise((resolve, reject) => {
-      async.parallel(
-        // Tasks.
-        functions.map(func => done => this[func](done)),
-        // Resolution.
-        err => err ? reject(err) : resolve(this.toJSON())
-      )
-    })
+    if (promise) {
+      this.promise = new Promise((resolve, reject) => {
+        async.parallel(
+          // Tasks.
+          functions.map(func => done => this[func](done)),
+          // Resolution.
+          err => err ? reject(err) : resolve(this.toJSON())
+        )
+      })
+    }
+    else {
+      functions.map(func => this[func]())
+      return this.toJSON()
+    }
 
     // And then return it for resolution.
     return this.promise
@@ -209,7 +215,7 @@ class Waterline_JSONAPI {
     this.response_data = new Data_Generator(this)
 
     // Tell the async job we're done.
-    done()
+    done && done()
   }
 
   create_links(done) {
@@ -217,7 +223,7 @@ class Waterline_JSONAPI {
     this.response_links = new Links_Generator(this)
 
     // Tell the async job we're done.
-    done()
+    done && done()
   }
 
   create_includes(done) {
@@ -225,7 +231,7 @@ class Waterline_JSONAPI {
     this.response_includes = new Includes_Generator(this)
 
     // Tell the async job we're done.
-    done()
+    done && done()
   }
 
   create_meta(done) {
@@ -233,7 +239,7 @@ class Waterline_JSONAPI {
     this.response_meta = new Meta_Generator(this)
 
     // Tell the async job we're done.
-    done()
+    done && done()
   }
 
   create_jsonapi(done) {
@@ -241,7 +247,7 @@ class Waterline_JSONAPI {
     this.response_jsonapi = new JSONAPI_Generator(this)
 
     // Tell the async job we're done.
-    done()
+    done && done()
   }
 
   /**
