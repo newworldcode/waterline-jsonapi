@@ -54,30 +54,6 @@ class Waterline_JSONAPI {
   }
 
   /**
-   * Return whether or not the values
-   * passed in was an array or not.
-   * Will normalise single element arrays to an object.
-   * @return {Boolean} is array or not.
-   */
-  is_array() {
-    // If it's an array and it's length
-    // is more than one, return true.
-    if (Array.isArray(this.values) && this.values.length > 1) {
-      return true
-    }
-    // If it's an array and the length is 1,
-    // reset to the first element and return false.
-    else if (Array.isArray(this.values) && this.values.length === 1) {
-      this.values = this.values[0]
-      return false
-    }
-    // Otherwise, it's definitely not an array.
-    else {
-      return false
-    }
-  }
-
-  /**
    * Run callback over all the values as a map
    * function and return the value.
    * @param  {Function} callback to run as map
@@ -86,7 +62,7 @@ class Waterline_JSONAPI {
    */
   run(callback, scope) {
     // Generate the payload(s).
-    if (this.is_array()) {
+    if (Array.isArray(this.values)) {
       return this.values.slice().map(callback, scope)
     }
     else {
@@ -296,13 +272,6 @@ class Waterline_JSONAPI {
           delete values[key]
         }
       })
-
-    // Check the length of the data attribute.
-    if (Array.isArray(values.data)) {
-      if (values.data.length === 1) {
-        values.data = values.data[0]
-      }
-    }
 
     // Return the updated values.
     return values
