@@ -13,14 +13,23 @@ get_ontology(ontology => {
   // Test a bunch of different payloads.
   Object.keys(payloads)
     .forEach(key => {
+      const payload = payloads[key].payload
+      const collection = ontology.collections[payloads[key].collection]
+
       tape(`Test "${key}" payload`, test => {
-        test.plan(1)
+        test.plan(2)
+
         test.doesNotThrow(() => {
-          new Waterline_JSONAPI(payloads[key].payload, ontology.collections[payloads[key].collection])
-            .generate()
+          new Waterline_JSONAPI(payload, collection).generate(true)
             .then(payload => validator.validate(payload))
             .catch(err => { throw err })
-        }, `Does not throw when creating "${key}" and validating payload.`)
+        }, `Does not throw when creating "${key}" and validating payload with promise.`)
+
+        test.doesNotThrow(() => {
+          const value = new Waterline_JSONAPI(payload, collection).generate()
+          
+          validator.validate(value)
+        }, `Does not throw when creating "${key}" and validating payload without promise.`)
       })
 
       tape("Throws when missing collection argument and does not throw when passed meta.", test => {

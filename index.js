@@ -76,6 +76,8 @@ class Waterline_JSONAPI {
    * @return {Promise} promise.
    */
   generate(promise) {
+    this.promise = !!promise
+    
     // Check we have a collection first.
     if (!this.collection) {
       throw new ReferenceError("No collection to generate on.")
@@ -158,9 +160,9 @@ class Waterline_JSONAPI {
    * @return {Object} JSONAPI compliant error object.
    */
   payload_from_error(values) {
-    return new Promise(resolve => {
-      // Add all valid keys from the values object.
-      const object = {
+    // Add all valid keys from the values object.
+    const object = {
+      errors: [{
         id: values.id || require("uuid").v4(),
         detail: values.message,
         source: values.source,
@@ -169,21 +171,21 @@ class Waterline_JSONAPI {
         meta: values.meta,
         title: values.title,
         links: values.links
-      }
+      }]
+    }
 
-      // Remove anything useless.
-      Object.keys(object)
-        .forEach(key => {
-          if (!object[key]) {
-            delete object[key]
-          }
-        })
-
-      // Resolve the promise.
-      return resolve({
-        errors: object
+    // Remove anything useless.
+    Object.keys(object.errors[0])
+      .forEach(key => {
+        if (!object[key]) {
+          delete object[key]
+        }
       })
-    })
+
+    if (this.promise)
+      return Promise.resolve(object)
+    else
+      return object
   }
 
   create_data(done) {
