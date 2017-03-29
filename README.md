@@ -21,13 +21,26 @@ const Waterline_JSONAPI = require("waterline-jsonapi")
 User
   .find()
   .populate("pets")
-  
+
   // Create a JSON API payload from the results.
   .then(user_and_pets => {
-    new Waterline_JSONAPI(user_and_pets, User).generate()
+    const jsonapi = new Waterline_JSONAPI(user_and_pets, User).generate()
+    reply(jsonapi)
+  })
+
+// Or with a Promise
+
+User
+  .find()
+  .populate("pets")
+
+  // Create a JSON API payload from the results.
+  .then(user_and_pets => {
+    new Waterline_JSONAPI(user_and_pets, User).generate(true) // Note: the true here.
+
       // Reply with your data.
       .then(payload => reply(payload))
-      
+
       // If there was an unlikely error, you can catch here.
       .catch(error => reply(error))
   })
